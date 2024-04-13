@@ -1,4 +1,4 @@
-#Dictionaries_Tarea1
+#Dictionaries_Tarea1_Nombres-Ordenados
 students_in_math={
     "Jael":8,
     "Jose":7,   
@@ -12,8 +12,6 @@ students_in_math={
     "Ana":10,
     "Carolina":9    
 }
-#for key,value in students_in_math.items():
-    #print("El/La alumno(a):",key,",tiene una calificacion de:",value)
 
 nombres_ordenados=dict(sorted(students_in_math.items()))
 for key,value in nombres_ordenados.items():
