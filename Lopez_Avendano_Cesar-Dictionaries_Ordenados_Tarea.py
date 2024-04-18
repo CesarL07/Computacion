@@ -12,12 +12,20 @@ students_in_math={
     "Ana":10,
     "Carolina":9    
 }
-#for key,value in students_in_math.items():
-    #print("El/La alumno(a):",key,",tiene una calificacion de:",value)
+for key,value in students_in_math.items():
+    print("El/La alumno(a):",key,",tiene una calificacion de:",value)
+print("===================================================")
 
+# Imprimir el diccionario ordenado por orden alfabetico
 nombres_ordenados=dict(sorted(students_in_math.items()))
 for key,value in nombres_ordenados.items():
     print("El/La alumno(a):",key,",tiene una calificacion de",value)
+print("====================================================")
+
+# Imprimir el diccionario ordenado por orden numerico (calificaciones)
+calificaciones_ordenadas=sorted(students_in_math, key=students_in_math.get, reverse=True)
+for alumno in calificaciones_ordenadas:
+    print("El/La alumno(a):",alumno,"tiene una calificacion de",str(students_in_math[alumno]))
 
 
 
