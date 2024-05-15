@@ -4,7 +4,7 @@ import math
 import turtle as t
 
 def dibujar_ejes():
-    #Con este ciclo dibujamos al eje "y" y sus correspondientes valores
+    #Con este ciclo dibujo al eje "y" y sus correspondientes valores
     t.penup()
     t.goto(0, -350)
     t.pendown()
@@ -15,7 +15,7 @@ def dibujar_ejes():
         t.pendown()
         t.write(str(i))
 
-    #Con este otro dibujamos al eje "x" y sus correspondientes valores
+    #Con este otro dibujo al eje "x" y sus correspondientes valores
     t.penup()
     t.goto(-620, 0)
     t.pendown()
