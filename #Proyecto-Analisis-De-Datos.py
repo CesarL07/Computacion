@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 
-#CREACION DEL DATASET:
+#CREACION DEL DATAFRAME:
 IMDB_DATA=pd.read_csv("D:/PYTHON/imdb_data.csv")
 print("===========================================================")
 
@@ -14,12 +14,12 @@ print("===========================================================")
 #Eliminamos columnas innecesarias:
 IMDB_DATA=IMDB_DATA.drop(["Poster", "Cast", "Description", "Review Title", "Review"], axis=1)
 
-#Cambiemos los tipos de datos necesarios:
-IMDB_DATA["Year"]=pd.to_numeric(IMDB_DATA["Year"])
-
 #Eliminamos los valores nulos y duplicados:
 IMDB_DATA=IMDB_DATA.dropna()
 IMDB_DATA=IMDB_DATA.drop_duplicates()
+
+#Cambiemos los tipos de datos necesarios:
+IMDB_DATA["Year"]=pd.to_numeric(IMDB_DATA["Year"])
 
 #Verifiquemos informacion general de nuestro DF:
 print(IMDB_DATA.shape)
@@ -58,7 +58,7 @@ plt.show()
 #Primero eliminamos las comillas que separan los digitos:
 IMDB_DATA["Review Count"]=IMDB_DATA["Review Count"].str.replace(",", "").astype(int)
 NR_PY=IMDB_DATA.groupby("Year")["Review Count"].sum()
-graph4=NR_PY.plot(kind="bar", x="Año", ylabel="Numero de reviews")
+graph4=NR_PY.plot(kind="bar", xlabel="Año", ylabel="Numero de reviews")
 graph4.set_title("Número de reviews por año")
 plt.show()
 
@@ -81,11 +81,8 @@ plt.xticks(rotation=90)
 plt.show()
 
 #Directores mejor calificados (10)
-fig,axes=plt.subplots()
-df_D=IMDB_DATA.groupby("Director")
-df_DM=pd.DataFrame(df_D["Rating"].mean())
-df_DM=df_DM.sort_values("Rating", ascending=False)
-sns.barplot(x=df_DM.index[:10], y=df_DM.iloc[:10, 0].values, ax=axes)
+df_D=IMDB_DATA.groupby("Director")["Rating"].mean().sort_values(ascending=False).head(10)
+sns.barplot(x=df_D.index, y=df_D.values)
 plt.title("10 directores mejor calificados")
 plt.xlabel("Directores")
 plt.ylabel("Calificacion Promedio")
@@ -93,16 +90,14 @@ plt.xticks(rotation=90)
 plt.show()
 
 #Directores con peor calificacion (10):
-fig,axes=plt.subplots()
-df_D=IMDB_DATA.groupby("Director")
-df_DM=pd.DataFrame(df_D["Rating"].mean())
-df_DM=df_DM.sort_values("Rating", ascending=True)
-sns.barplot(x=df_DM.index[:10], y=df_DM.iloc[:10, 0].values, ax=axes)
+df_DM=IMDB_DATA.groupby("Director")["Rating"].mean().sort_values(ascending=True).head(10)
+sns.barplot(x=df_DM.index, y=df_DM.values)
 plt.title("10 directores peor calificados")
 plt.xlabel("Directores")
 plt.ylabel("Calificacion Promedio")
 plt.xticks(rotation=90)
 plt.show()
+
 
 #Peliculas con mayor numero de reviews (10):
 T10_MRM=IMDB_DATA.sort_values(by="Review Count", ascending=False).head(10)
@@ -149,7 +144,7 @@ plt.xticks(rotation=90)
 plt.show()
 
 #Grafico de correlacion
-Numeric_Data=IMDB_DATA.select_dtypes(include=["float64", "int64"])
+Numeric_Data=IMDB_DATA.select_dtypes(include=["float64", "int64", "int32"])
 corr=Numeric_Data.corr(method="spearman")
 print(corr)
 graph7=sns.heatmap(corr, annot=True, cmap="coolwarm", center=0)
@@ -161,7 +156,6 @@ print("===========================================================")
 #PREDICCION DE CALIFICACION CON Sckit-Learn
 
 #Primero hacemos la limpieza de la columna "Votes" - Para eliminar las comillas que separan los digitos
-#Lo hice de este modo por que de otra forma no me funcionaba (no se por que)
 columna=["Votes"] 
 for element in columna:
     IMDB_DATA[element]=IMDB_DATA[element].str.replace(",", "").astype(float)
@@ -172,7 +166,7 @@ y = IMDB_DATA["Rating"]
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
 
 #Este es el modelo que vamos a utilizar
-modelo=RandomForestRegressor()
+modelo=RandomForestRegressor(n_estimators=100, min_samples_split=2)
 
 #Aqui se entrena al modelo
 modelo.fit(X_train, y_train)
@@ -181,7 +175,7 @@ modelo.fit(X_train, y_train)
 y_pred=modelo.predict(X_test)
 mse=mean_squared_error(y_test, y_pred)
 rf_r2s=r2_score(y_test, y_pred)
-print(f"Desviacion estandar: {mse}")
+print(f"Mean Squared Error: {mse}")
 print(f"R2: {rf_r2s}")
 
 print("===========================================================")
